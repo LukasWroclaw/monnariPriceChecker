@@ -14,25 +14,34 @@ class userFunctions(object):
         
         self.dataBaseHandler.addElement({"link": link, "price": price})
         
+    def resetBase(self):
+        self.dataBaseHandler.clearDataBase()
+        
     def deleteExistingItem(self, link):    
         self.dataBaseHandler.removeElement({"link": link})
         
-    def checkPrices(self):
+    def checkPrices(self, changedOnly):
         listOfRecords = self.dataBaseHandler.getRecordsFromDataBase()
+        
+        listOfItems = []
         
         for element in listOfRecords:
             link = element["link"]
             recordedPrice = element["price"]
             parser = PageParser(link)
             currentPrice = parser.getPrice()
-            print("Recorded price", recordedPrice, "current price", currentPrice, "Link", link)
+            summaryString = "Recorded price " + str(recordedPrice) + " current price " + str(currentPrice) + " Link " + str(link)
+            if(not changedOnly or recordedPrice != currentPrice):
+                listOfItems.append(summaryString)
+            
+        return listOfItems
             
             
             
             
             
-uF = userFunctions()
-uF.addNewItem("https://emonnari.pl/torby/koszyki/torba-koszyk-monnari,p-62408")
-uF.addNewItem("https://emonnari.pl/akcesoria/okulary/okulary-w-ksztalcie-kociego-oka,p-60566")
+#uF = userFunctions()
+#uF.addNewItem("https://emonnari.pl/torby/koszyki/torba-koszyk-monnari,p-62408")
+#uF.addNewItem("https://emonnari.pl/akcesoria/okulary/okulary-w-ksztalcie-kociego-oka,p-60566")
 
-uF.checkPrices()
+#uF.checkPrices(False)

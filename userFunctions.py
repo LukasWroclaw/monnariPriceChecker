@@ -30,9 +30,10 @@ class userFunctions(object):
             recordedPrice = element["price"]
             parser = PageParser(link)
             currentPrice = parser.getPrice()
-            summaryString = "Recorded price " + str(recordedPrice) + " current price " + str(currentPrice) + " Link " + str(link)
+            summaryDict = {"RecordedPrice": str(recordedPrice), "CurrentPrice": str(currentPrice), "Link": str(link)}
+
             if(not changedOnly or recordedPrice != currentPrice):
-                listOfItems.append(summaryString)
+                listOfItems.append(summaryDict)
             
         return listOfItems
             

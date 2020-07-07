@@ -1,6 +1,6 @@
 import sys
 from userFunctions import userFunctions
-from PyQt5.QtWidgets import (QWidget, QGridLayout, QPlainTextEdit, QTableWidget,
+from PyQt5.QtWidgets import (QWidget, QGridLayout, QPlainTextEdit, QTableWidget, QTableWidgetItem,
                              QPushButton, QApplication, QMessageBox, QLineEdit, QCheckBox)
 
 
@@ -9,7 +9,7 @@ class Example(QWidget):
     def __init__(self):
         super().__init__()
         self.userFunctions = userFunctions()
-
+        self.tableWidget = 0;
         self.initUI()
 
     def initUI(self):
@@ -21,6 +21,8 @@ class Example(QWidget):
         self.createAddSection()
         self.createResetSection()
         self.createCheckSection()
+        self.createTable()
+
 
 
         self.move(300, 150)
@@ -61,21 +63,45 @@ class Example(QWidget):
         boxCheck = QCheckBox("Show_Only_Changed")
         self.grid.addWidget(boxCheck, 2,1)
         
-        textBoxPrices = QPlainTextEdit(self)
-        self.grid.addWidget(textBoxPrices, 3,0)        
-             
+               
         def on_buttonCheck_clicked():
-            textBoxPrices.clear()
+            self.resetTable()       
             changedOnly = boxCheck.isChecked()
             listOfItems = self.userFunctions.checkPrices(changedOnly)
-            textToShow = ""
-            
-            for item in listOfItems:
-                textToShow = textToShow+ item + "\n"
-                         
-            textBoxPrices.insertPlainText(textToShow)
-            
+
+            self.updateTable(listOfItems)
+                                   
         buttonCheck.clicked.connect(on_buttonCheck_clicked) 
+        
+    def createTable(self):
+        self.tableWidget = QTableWidget()
+        self.tableWidget.setRowCount(30)
+        self.tableWidget.setColumnCount(3)
+        
+        self.tableWidget.setItem(0,0, QTableWidgetItem("Recorded price"))
+        self.tableWidget.setItem(0,1, QTableWidgetItem("Current price"))
+        self.tableWidget.setItem(0,2, QTableWidgetItem("Link"))
+                
+        self.grid.addWidget(self.tableWidget, 3,0, 3, 3)
+        
+    def updateTable(self, listOfItems):
+        rowIncrement = 1
+        
+        for element in listOfItems:
+            self.tableWidget.setItem(rowIncrement,0, QTableWidgetItem(element["RecordedPrice"]))
+            self.tableWidget.setItem(rowIncrement,1, QTableWidgetItem(element["CurrentPrice"]))
+            self.tableWidget.setItem(rowIncrement,2, QTableWidgetItem(element["Link"]))
+            rowIncrement = rowIncrement + 1
+        
+    def resetTable(self):
+        for i in range(1, 28):
+            self.tableWidget.setItem(i,0, QTableWidgetItem(""))
+            self.tableWidget.setItem(i,1, QTableWidgetItem(""))
+            self.tableWidget.setItem(i,2, QTableWidgetItem(""))
+        
+        
+        
+        
         
         
 

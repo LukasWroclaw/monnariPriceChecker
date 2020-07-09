@@ -97,6 +97,8 @@ class Example(QWidget):
         self.tableWidget = QTableWidget()
         self.tableWidget.setRowCount(50)
         self.tableWidget.setColumnCount(3)
+        self.tableWidget.verticalHeader().setVisible(False)
+        self.tableWidget.horizontalHeader().setVisible(False)
         self.tableWidget.setColumnWidth(2,650)
         
         self.tableWidget.setItem(0,0, QTableWidgetItem("Recorded price"))

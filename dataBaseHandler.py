@@ -99,9 +99,6 @@ class DataBaseHandler(object):
     def clearDataBase(self):
         self.addElementsToExcel([])
                 
-            
-        
-        
         
     
 class TestingClass(unittest.TestCase):

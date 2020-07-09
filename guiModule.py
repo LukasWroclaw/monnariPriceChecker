@@ -19,14 +19,16 @@ class Example(QWidget):
         
         
         self.createAddSection()
+        self.createRemoveSection()
         self.createResetSection()
         self.createCheckSection()
         self.createTable()
 
 
 
-        self.move(300, 150)
+        ##self.move(300, 150)
         self.setWindowTitle('Monnari Price Checker')
+        self.setGeometry(100, 100, 900, 900) 
         self.show()
         
     def createAddSection(self):
@@ -45,9 +47,26 @@ class Example(QWidget):
             
         buttonAdd.clicked.connect(on_buttonAdd_clicked)
         
+    def createRemoveSection(self):
+        buttonRemove = QPushButton("Remove_Item")
+        self.grid.addWidget(buttonRemove, 1, 0)
+        
+        textBoxRemove = QLineEdit(self)
+        textBoxRemove.setMinimumWidth(600)
+        self.grid.addWidget(textBoxRemove, 1,1)
+        
+        def on_buttonRemove_clicked():
+            textFromBox = str(textBoxRemove.text())
+            if(len(textFromBox) > 4):
+                self.userFunctions.deleteExistingItem(textFromBox)
+            textBoxRemove.setText("")
+            
+        buttonRemove.clicked.connect(on_buttonRemove_clicked)
+        
+        
     def createResetSection(self):
         buttonReset = QPushButton("Reset_base")     
-        self.grid.addWidget(buttonReset, 1,0)
+        self.grid.addWidget(buttonReset, 1,3)
         
         def on_buttonReset_clicked():
             self.userFunctions.resetBase()
@@ -58,10 +77,11 @@ class Example(QWidget):
         
     def createCheckSection(self):
         buttonCheck = QPushButton("Check_Prices")     
-        self.grid.addWidget(buttonCheck, 2,0)
+        self.grid.addWidget(buttonCheck, 3,0)
         
         boxCheck = QCheckBox("Show_Only_Changed")
-        self.grid.addWidget(boxCheck, 2,1)
+        boxCheck.setChecked(True)
+        self.grid.addWidget(boxCheck, 3,1)
         
                
         def on_buttonCheck_clicked():
@@ -75,14 +95,15 @@ class Example(QWidget):
         
     def createTable(self):
         self.tableWidget = QTableWidget()
-        self.tableWidget.setRowCount(30)
+        self.tableWidget.setRowCount(50)
         self.tableWidget.setColumnCount(3)
+        self.tableWidget.setColumnWidth(2,650)
         
         self.tableWidget.setItem(0,0, QTableWidgetItem("Recorded price"))
         self.tableWidget.setItem(0,1, QTableWidgetItem("Current price"))
-        self.tableWidget.setItem(0,2, QTableWidgetItem("Link"))
+        self.tableWidget.setItem(0,2, QTableWidgetItem("Link                                             "))
                 
-        self.grid.addWidget(self.tableWidget, 3,0, 3, 3)
+        self.grid.addWidget(self.tableWidget, 4,0, 3, 3)
         
     def updateTable(self, listOfItems):
         rowIncrement = 1
@@ -94,7 +115,7 @@ class Example(QWidget):
             rowIncrement = rowIncrement + 1
         
     def resetTable(self):
-        for i in range(1, 28):
+        for i in range(1, 48):
             self.tableWidget.setItem(i,0, QTableWidgetItem(""))
             self.tableWidget.setItem(i,1, QTableWidgetItem(""))
             self.tableWidget.setItem(i,2, QTableWidgetItem(""))

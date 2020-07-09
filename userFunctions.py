@@ -17,7 +17,7 @@ class userFunctions(object):
     def resetBase(self):
         self.dataBaseHandler.clearDataBase()
         
-    def deleteExistingItem(self, link):    
+    def deleteExistingItem(self, link):
         self.dataBaseHandler.removeElement({"link": link})
         
     def checkPrices(self, changedOnly):

@@ -103,7 +103,7 @@ class Example(QWidget):
         
         self.tableWidget.setItem(0,0, QTableWidgetItem("Recorded price"))
         self.tableWidget.setItem(0,1, QTableWidgetItem("Current price"))
-        self.tableWidget.setItem(0,2, QTableWidgetItem("Link                                             "))
+        self.tableWidget.setItem(0,2, QTableWidgetItem("Link"))
                 
         self.grid.addWidget(self.tableWidget, 4,0, 3, 3)
         

@@ -18,7 +18,6 @@ class PageParser(object):
 
     def extractNumberFromString(self, str):
         result = re.findall("\d+", str)
-           
         strResult = ""
         for element in result:
             strResult += element
@@ -34,6 +33,8 @@ class PageParser(object):
             return self.getPricePromod()
         elif("monnari" in self.urlAddress):
             return self.getPriceMonnari()
+        elif("quiosque" in self.urlAddress):
+            return self.getPriceQuiosque()
         else:
             return 0
         
@@ -47,7 +48,7 @@ class PageParser(object):
             priceAreaString = self.strPageContent[begin: (begin+40)]
             splittedPriceString = priceAreaString.split(".")
             plnPart = splittedPriceString[0]
-            grPart = splittedPriceString[1]
+            grPart = splittedPriceString[1][:4]
             
             
             plnInt = self.extractNumberFromString(plnPart)
@@ -67,7 +68,7 @@ class PageParser(object):
             priceAreaString = self.strPageContent[begin: (begin+40)]
             splittedPriceString = priceAreaString.split(".")
             plnPart = splittedPriceString[0]
-            grPart = splittedPriceString[1]
+            grPart = splittedPriceString[1][:4]
             
             
             plnInt = self.extractNumberFromString(plnPart)
@@ -80,11 +81,30 @@ class PageParser(object):
         else:
             return 0
         
-#69.90
-#https://www.promod.pl/kobiety/top-na-ramiaczkach-ecru-R5260002021.html
+    def getPriceQuiosque(self):
+        begin = self.strPageContent.find("finalPrice\" class=\"price-wrapper \" ><span class=\"price\">")
+            
+        if(begin != (-1)):
+            priceAreaString = self.strPageContent[begin : (begin+70)]
+            splittedPriceString = priceAreaString.split(",")
+            plnPart = splittedPriceString[0]
+            grPart = splittedPriceString[1][:4]
+            
+            plnInt = self.extractNumberFromString(plnPart)
+            grInt = self.extractNumberFromString(grPart)
+            
+            price = float(plnInt) + float(grInt/100)
+            
+            return price
+                
+        else:
+            return 0
+        
+        
 
-##parser = PageParser("https://www.promod.pl/kobiety/top-na-ramiaczkach-ecru-R5260002021.html")
-##print("Cena", parser.getPricePromod())
+
+#parser = PageParser("https://quiosque.pl/bezowy-prazkowany-sweter-6jb001102.html")#"https://quiosque.pl/czarny-kardigan-z-blyszczacymi-kolkami-6ig002299.html")
+#print("Cena",parser.getPriceQuiosque())
 
 ##parser = PageParser("https://emonnari.pl/odziez/bluzki/wizytowe/wizytowa-bluzka-z-wiazaniem-z-tylu,p-58908")
 ##parser.getPrice()

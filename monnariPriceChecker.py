@@ -4,6 +4,10 @@ from PyQt5.QtWidgets import (QWidget, QGridLayout, QPlainTextEdit, QTableWidget,
                              QPushButton, QApplication, QMessageBox, QLineEdit, QCheckBox)
 
 
+
+numberOfRowsInATable = 300
+
+
 class Example(QWidget):
 
     def __init__(self):
@@ -95,7 +99,7 @@ class Example(QWidget):
         
     def createTable(self):
         self.tableWidget = QTableWidget()
-        self.tableWidget.setRowCount(50)
+        self.tableWidget.setRowCount(numberOfRowsInATable)
         self.tableWidget.setColumnCount(3)
         self.tableWidget.verticalHeader().setVisible(False)
         self.tableWidget.horizontalHeader().setVisible(False)
@@ -117,7 +121,7 @@ class Example(QWidget):
             rowIncrement = rowIncrement + 1
         
     def resetTable(self):
-        for i in range(1, 48):
+        for i in range(1, numberOfRowsInATable - 2):
             self.tableWidget.setItem(i,0, QTableWidgetItem(""))
             self.tableWidget.setItem(i,1, QTableWidgetItem(""))
             self.tableWidget.setItem(i,2, QTableWidgetItem(""))

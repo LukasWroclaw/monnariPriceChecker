@@ -24,14 +24,14 @@ class userFunctions(object):
         listOfRecords = self.dataBaseHandler.getRecordsFromDataBase()
         
         listOfItems = []
-        
+                
         for element in listOfRecords:
             link = element["link"]
             recordedPrice = element["price"]
             parser = PageParser(link)
             currentPrice = parser.getPrice()
             summaryDict = {"RecordedPrice": str(recordedPrice), "CurrentPrice": str(currentPrice), "Link": str(link)}
-
+            
             if(not changedOnly or recordedPrice != currentPrice):
                 listOfItems.append(summaryDict)
             

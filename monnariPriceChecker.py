@@ -1,4 +1,5 @@
 import sys
+import time
 from userFunctions import userFunctions
 from PyQt5.QtWidgets import (QWidget, QGridLayout, QPlainTextEdit, QTableWidget, QTableWidgetItem,
                              QPushButton, QApplication, QMessageBox, QLineEdit, QCheckBox)
@@ -26,6 +27,7 @@ class Example(QWidget):
         self.createRemoveSection()
         self.createResetSection()
         self.createCheckSection()
+        self.createStatusInfo()
         self.createTable()
 
 
@@ -36,7 +38,7 @@ class Example(QWidget):
         self.show()
         
     def createAddSection(self):
-        buttonAdd = QPushButton("Add_Price")
+        buttonAdd = QPushButton("Add_Item")
         self.grid.addWidget(buttonAdd, 0,0)
         
         textBoxAdd = QLineEdit(self)
@@ -48,6 +50,8 @@ class Example(QWidget):
             if(len(textFromBox) > 4):
                 self.userFunctions.addNewItem(textFromBox)
             textBoxAdd.setText("")
+            self.updateStatusInfo("New element added succesfully")
+            
             
         buttonAdd.clicked.connect(on_buttonAdd_clicked)
         
@@ -95,24 +99,33 @@ class Example(QWidget):
 
             self.updateTable(listOfItems)
                                    
-        buttonCheck.clicked.connect(on_buttonCheck_clicked) 
+        buttonCheck.clicked.connect(on_buttonCheck_clicked)
         
+    def createStatusInfo(self):
+        self.textBoxStatus = QLineEdit(self)
+        self.textBoxStatus.setMinimumWidth(300)
+        self.grid.addWidget(self.textBoxStatus, 4,0)
+        self.textBoxStatus.setText("")
+        
+    def updateStatusInfo(self, text):
+        self.textBoxStatus.setText(text)
+
+
+
+             
     def createTable(self):
         self.tableWidget = QTableWidget()
         self.tableWidget.setRowCount(numberOfRowsInATable)
         self.tableWidget.setColumnCount(3)
-        self.tableWidget.verticalHeader().setVisible(False)
-        self.tableWidget.horizontalHeader().setVisible(False)
+        self.tableWidget.setHorizontalHeaderLabels(['Recorded price', 'Current price', 'Link'])
+        self.tableWidget.verticalHeader().setVisible(True)
+        self.tableWidget.horizontalHeader().setVisible(True)
         self.tableWidget.setColumnWidth(2,650)
-        
-        self.tableWidget.setItem(0,0, QTableWidgetItem("Recorded price"))
-        self.tableWidget.setItem(0,1, QTableWidgetItem("Current price"))
-        self.tableWidget.setItem(0,2, QTableWidgetItem("Link"))
-                
-        self.grid.addWidget(self.tableWidget, 4,0, 3, 3)
+                       
+        self.grid.addWidget(self.tableWidget, 5,0, 3, 3)
         
     def updateTable(self, listOfItems):
-        rowIncrement = 1
+        rowIncrement = 0
         
         for element in listOfItems:
             self.tableWidget.setItem(rowIncrement,0, QTableWidgetItem(element["RecordedPrice"]))

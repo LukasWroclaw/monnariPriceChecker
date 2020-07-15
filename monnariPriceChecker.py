@@ -68,6 +68,7 @@ class Example(QWidget):
             if(len(textFromBox) > 4):
                 self.userFunctions.deleteExistingItem(textFromBox)
             textBoxRemove.setText("")
+            self.updateStatusInfo("Element removed succesfully")
             
         buttonRemove.clicked.connect(on_buttonRemove_clicked)
         
@@ -78,6 +79,7 @@ class Example(QWidget):
         
         def on_buttonReset_clicked():
             self.userFunctions.resetBase()
+            self.updateStatusInfo("Database cleared succesfully")
             
         buttonReset.clicked.connect(on_buttonReset_clicked)  
         
@@ -93,11 +95,13 @@ class Example(QWidget):
         
                
         def on_buttonCheck_clicked():
+            self.updateStatusInfo("Checking prices, it will take a while")
             self.resetTable()       
             changedOnly = boxCheck.isChecked()
             listOfItems = self.userFunctions.checkPrices(changedOnly)
 
             self.updateTable(listOfItems)
+            
                                    
         buttonCheck.clicked.connect(on_buttonCheck_clicked)
         

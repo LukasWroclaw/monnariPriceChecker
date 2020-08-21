@@ -1,6 +1,7 @@
 import sys
 import time
 from userFunctions import userFunctions
+from utilityFunctions import ReplayStatus
 from PyQt5.QtWidgets import (QWidget, QGridLayout, QPlainTextEdit, QTableWidget, QTableWidgetItem,
                              QPushButton, QApplication, QMessageBox, QLineEdit, QCheckBox)
 
@@ -46,11 +47,20 @@ class Example(QWidget):
         self.grid.addWidget(textBoxAdd, 0,1)
         
         def on_buttonAdd_clicked():
+            replayStatus = ReplayStatus.NOK
             textFromBox = str(textBoxAdd.text())
-            if(len(textFromBox) > 4):
-                self.userFunctions.addNewItem(textFromBox)
             textBoxAdd.setText("")
-            self.updateStatusInfo("New element added succesfully")
+            
+            if(len(textFromBox) > 4):
+                replayStatus = self.userFunctions.addNewItem(textFromBox)
+            else:
+                self.updateStatusInfo("Element name too short")
+                   
+            if(replayStatus == ReplayStatus.OK):
+                self.updateStatusInfo("New element added succesfully")
+            elif(replayStatus == ReplayStatus.DUPLICATE):
+                self.updateStatusInfo("Element not added. It's duplicate.")
+                
             
             
         buttonAdd.clicked.connect(on_buttonAdd_clicked)
@@ -95,7 +105,7 @@ class Example(QWidget):
         
                
         def on_buttonCheck_clicked():
-            self.updateStatusInfo("Checking prices, it will take a while")
+            self.updateStatusInfo("Prices checked")
             self.resetTable()       
             changedOnly = boxCheck.isChecked()
             listOfItems = self.userFunctions.checkPrices(changedOnly)

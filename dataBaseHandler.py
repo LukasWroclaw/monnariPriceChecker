@@ -1,5 +1,6 @@
 import xlwt
 import xlrd
+from utilityFunctions import ReplayStatus
 
 import unittest
 
@@ -68,18 +69,28 @@ class DataBaseHandler(object):
         wb.save(self.baseName)
         
     def addElement(self, newElement):
+
         
         if(self.checkIfBaseExist == 0):
             self.addElementsToExcel([newElement])
-        else:
-            listOfRecords = self.getRecordsFromDataBase()
-            listOfRecords.append(newElement)
-            self.addElementsToExcel(listOfRecords)
+            return ReplayStatus.OK
+            
+        
+        listOfRecords = self.getRecordsFromDataBase()
+        
+        if(newElement in listOfRecords):
+            return ReplayStatus.DUPLICATE
+        
+        listOfRecords.append(newElement)
+        self.addElementsToExcel(listOfRecords)
+            
+        return ReplayStatus.OK
         
         
     def removeElement(self, elementToRemove):
         if(self.checkIfBaseExist == 0):
             print("Error, list is empty")
+            return ReplayStatus.NOK
         else:
             listOfRecords = self.getRecordsFromDataBase()
             found = 0
@@ -93,8 +104,10 @@ class DataBaseHandler(object):
             if(found == 1):
                 listOfRecords.remove(buffor)
                 self.addElementsToExcel(listOfRecords)
+                return ReplayStatus.OK
             else:
                 print("Error, element not found")
+                return ReplayStatus.NOK
                 
     def clearDataBase(self):
         self.addElementsToExcel([])
@@ -119,6 +132,7 @@ class TestingClass(unittest.TestCase):
         listOfRecords = dataBaseHandler.getRecordsFromDataBase()
         self.assertEqual(listOfRecords, expectedList)
         
+              
     def test_addAndRemoveElement(self):
         expectedList = [{"link": "Link1", "price": 1}, {"link": "Link2", "price": 2}]
         dataBaseHandler = DataBaseHandler("testBase.xls")
@@ -126,14 +140,25 @@ class TestingClass(unittest.TestCase):
         self.assertEqual(listOfRecords, expectedList)
         
         expectedList = [{"link": "Link1", "price": 1}, {"link": "Link2", "price": 2}, {"link": "Link3", "price": 3}]
-        dataBaseHandler.addElement({"link": "Link3", "price": 3})
+        resultFromAddition = dataBaseHandler.addElement({"link": "Link3", "price": 3})
         listOfRecords = dataBaseHandler.getRecordsFromDataBase()
         self.assertEqual(listOfRecords, expectedList)
+        self.assertEqual(ReplayStatus.OK, resultFromAddition)
         
         expectedList = [{"link": "Link1", "price": 1}, {"link": "Link2", "price": 2}]
-        dataBaseHandler.removeElement({"link": "Link3", "price": 3})
+        resultFromRemoval = dataBaseHandler.removeElement({"link": "Link3", "price": 3})
         listOfRecords = dataBaseHandler.getRecordsFromDataBase()
         self.assertEqual(listOfRecords, expectedList)
+        self.assertEqual(ReplayStatus.OK, resultFromRemoval)
+        
+    def test_addDuplicatedElement(self):
+        expectedList = [{"link": "Link1", "price": 1}, {"link": "Link2", "price": 2}]
+        dataBaseHandler = DataBaseHandler("testBase.xls")
+        resultFromAddition = dataBaseHandler.addElement({"link": "Link2", "price": 2})
+        listOfRecords = dataBaseHandler.getRecordsFromDataBase()
+        self.assertEqual(listOfRecords, expectedList)
+        self.assertEqual(ReplayStatus.DUPLICATE, resultFromAddition)
+        
         
     def test_removeEverything(self):
         expectedList = []

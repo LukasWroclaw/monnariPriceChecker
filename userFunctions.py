@@ -12,7 +12,8 @@ class userFunctions(object):
         parser = PageParser(link)
         price = parser.getPrice()
         
-        self.dataBaseHandler.addElement({"link": link, "price": price})
+        replayStatus = self.dataBaseHandler.addElement({"link": link, "price": price})
+        return replayStatus
         
     def resetBase(self):
         self.dataBaseHandler.clearDataBase()

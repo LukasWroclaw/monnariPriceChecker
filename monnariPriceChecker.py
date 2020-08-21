@@ -1,9 +1,9 @@
 import sys
 import time
 from userFunctions import userFunctions
-from utilityFunctions import ReplayStatus
+from utilityFunctions import (ReplayStatus, FiltersOption)
 from PyQt5.QtWidgets import (QWidget, QGridLayout, QPlainTextEdit, QTableWidget, QTableWidgetItem,
-                             QPushButton, QApplication, QMessageBox, QLineEdit, QCheckBox)
+                             QPushButton, QApplication, QMessageBox, QLineEdit, QCheckBox, QLabel, QComboBox)
 
 
 
@@ -28,13 +28,12 @@ class Example(QWidget):
         self.createRemoveSection()
         self.createResetSection()
         self.createCheckSection()
+        self.createFilterSection()
         self.createStatusInfo()
         self.createTable()
 
 
-
-        ##self.move(300, 150)
-        self.setWindowTitle('Monnari Price Checker')
+        self.setWindowTitle('Price Checker')
         self.setGeometry(100, 100, 900, 900) 
         self.show()
         
@@ -96,37 +95,67 @@ class Example(QWidget):
         
         
     def createCheckSection(self):
-        buttonCheck = QPushButton("Check_Prices")     
-        self.grid.addWidget(buttonCheck, 3,0)
+        self.buttonCheck = QPushButton("Check_Prices")     
+        self.grid.addWidget(self.buttonCheck, 3,0)
         
-        boxCheck = QCheckBox("Show_Only_Changed")
-        boxCheck.setChecked(True)
-        self.grid.addWidget(boxCheck, 3,1)
+        self.boxCheck = QCheckBox("Show_Only_Changed")
+        self.boxCheck.setChecked(True)
+        self.grid.addWidget(self.boxCheck, 3,1)
         
                
         def on_buttonCheck_clicked():
             self.updateStatusInfo("Prices checked")
             self.resetTable()       
-            changedOnly = boxCheck.isChecked()
-            listOfItems = self.userFunctions.checkPrices(changedOnly)
+            listOfFilters = []
+            
+            self.populateListOfFilters(listOfFilters)
+            listOfItems = self.userFunctions.checkPrices(listOfFilters)
 
             self.updateTable(listOfItems)
             
                                    
-        buttonCheck.clicked.connect(on_buttonCheck_clicked)
+        self.buttonCheck.clicked.connect(on_buttonCheck_clicked)
+        
+    def populateListOfFilters(self, listOfFilters):
+        if(self.boxCheck.isChecked()):
+            listOfFilters.append(FiltersOption.CHANGED_ONLY)
+            
+        text = str(self.filterComboBox.currentText())
+        
+        if(text == "With 0 current price(Not found)"):
+            listOfFilters.append(FiltersOption.ZERO_PRICE)
+        elif(text == "Promod only"):
+            listOfFilters.append(FiltersOption.PROMOD)
+        elif(text == "Monnari only"):
+            listOfFilters.append(FiltersOption.MONNARI)
+        elif(text == "Quiosque only"):
+            listOfFilters.append(FiltersOption.QUIOSQUE)
+        
+        
+    def createFilterSection(self):
+        self.filterLabel = QLabel(self)
+        self.filterLabel.setText("Additional filter")
+        self.grid.addWidget(self.filterLabel, 4,0)
+        
+        self.filterComboBox = QComboBox(self)
+        self.filterComboBox.addItems(["No filter", "With 0 current price(Not found)", "Promod only", "Monnari only", "Quiosque only"])         
+        self.grid.addWidget(self.filterComboBox, 4,1)
+        
         
     def createStatusInfo(self):
+        self.textBoxStatusLabel = QLabel(self)
+        self.textBoxStatusLabel.setText("Status information")
+        self.grid.addWidget(self.textBoxStatusLabel, 5,0)
+        
+        
         self.textBoxStatus = QLineEdit(self)
         self.textBoxStatus.setMinimumWidth(300)
-        self.grid.addWidget(self.textBoxStatus, 4,0)
+        self.grid.addWidget(self.textBoxStatus, 5,1)
         self.textBoxStatus.setText("")
         
     def updateStatusInfo(self, text):
         self.textBoxStatus.setText(text)
-
-
-
-             
+        
     def createTable(self):
         self.tableWidget = QTableWidget()
         self.tableWidget.setRowCount(numberOfRowsInATable)
@@ -136,7 +165,7 @@ class Example(QWidget):
         self.tableWidget.horizontalHeader().setVisible(True)
         self.tableWidget.setColumnWidth(2,650)
                        
-        self.grid.addWidget(self.tableWidget, 5,0, 3, 3)
+        self.grid.addWidget(self.tableWidget, 6,0, 3, 3)
         
     def updateTable(self, listOfItems):
         rowIncrement = 0
@@ -148,7 +177,7 @@ class Example(QWidget):
             rowIncrement = rowIncrement + 1
         
     def resetTable(self):
-        for i in range(1, numberOfRowsInATable - 2):
+        for i in range(0, numberOfRowsInATable - 2):
             self.tableWidget.setItem(i,0, QTableWidgetItem(""))
             self.tableWidget.setItem(i,1, QTableWidgetItem(""))
             self.tableWidget.setItem(i,2, QTableWidgetItem(""))
